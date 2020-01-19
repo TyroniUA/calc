@@ -1,4 +1,6 @@
 import React, { createRef } from 'react'
+const endsWithOperator = /[*+‑]$/;
+const endsWithNegativeSign = /[x/+]‑$/;
 
 class Calculator extends React.Component {
     constructor(props) {
@@ -7,109 +9,118 @@ class Calculator extends React.Component {
             formula:'',
             input: '0',
             previousValue: '',
-            currentValue: ''
+            currentValue: '',
         }
         this.handleCLick = this.handleCLick.bind(this);
     }
 
 
     handleCLick = (event) => {
-       if (this.state.input =='0'){
-           console.log('zero' + this.state.input)
-           this.setState({
-               formula: '' + event.target.value,
-               input:'' + event.target.value
-           })
-           
+        if (this.state.input == '0') {
+            console.log('zero' + this.state.input)
+            this.setState({
+                formula: '' + event.target.value,
+                input: '' + event.target.value
+            })
+
         }
-        else {this.setState({
-            formula: this.state.formula + event.target.value,
-            input: this.state.input + event.target.value})
-       }
-        
+        else if (!endsWithOperator.test(this.state.formula)) {
+            console.log('Im testing')
+            this.setState({
+                previousValue: this.state.formula,
+                formula: this.state.formula + event.target.value
+            })
+            console.log(this.state.previousValue);
+        }
+        else if (!endsWithNegativeSign.test(this.state.formula)) {
+            console.log('negative sign')
+            this.setState({
+                formula: (endsWithNegativeSign.test(this.state.formula + event.target.value) ? this.state.formula : this.state.previousValue) + event.target.value
+            })
+        }
+        else if (event.target.value !== "‑") {
+            console.log('it also doing something')
+            this.setState({
+                formula: this.state.previousValue + event.target.value
+            })
+
+        }
+        else {
+            this.setState({
+                formula: this.state.formula + event.target.value,
+                input: this.state.input + event.target.value
+            })
+        }
+
     }
     adding = () => {
-        this.state.previousValue = this.state.input;
+        
         this.setState({
-            formula: this.state.previousValue + '+',
+            formula: this.state.formula + '+',
             input: ''
         })
-        this.state.operator = 'plus'
     }
     subtract = () => {
-        this.state.previousValue = this.state.input;
+        
         this.setState({
-            formula: this.state.previousValue + '+',
+            formula: this.state.formula + '-',
             input: ''
         })
-        this.state.operator = 'subtract'
     }
     divide = () => {
-        this.state.previousValue = this.state.input;
+        
         this.setState({
-            input: ''
+            formula: this.state.formula + '/',
+            input: '/'
         })
-        this.state.operator = 'divide'
     }
     multiply = () => {
-        this.state.previousValue = this.state.input;
+        
         this.setState({
+            formula: this.state.formula + '*',
             input: ''
         })
-        this.state.operator = 'multiply'
     }
     addDecimal = (event) => {
         // only add decimal if there is no current decimal point present in the input area
+        
         if (this.state.input.indexOf(".") === -1) {
-          this.setState({ input: this.state.input + event.target.value });
+          this.setState({ 
+            formula: this.state.formula + event.target.value,  
+            input: this.state.input + event.target.value });
         }
       };
     clear = () => {
         this.setState({
-            input: '0'
+            input: '0',
+            formula: '0',
+            previousValue: '',
+            currentValue: ''
         })
 
-        this.state.previousValue = '';
-        this.state.currentValue = ''
 }
+    
     equals = () => {
-        if (this.state.operator === 'plus') {
-            this.state.currentValue = this.state.input
-            this.setState({
-
-                input: parseFloat(this.state.previousValue) + parseFloat(this.state.currentValue)
-            })
+       
+        // the code that works without trying to solve Problem 13:
+        let result = eval(this.state.formula.toString())
+        
+       this.setState({
+           /*formula: this.state.formula + ' = ' + eval(this.state.formula.toString()),*/
+           formula: result,
+           input: result
         }
-        else if (this.state.operator === 'subtract') {
-            this.state.currentValue = this.state.input
-            this.setState({
-
-                input: parseFloat(this.state.previousValue) - parseFloat(this.state.currentValue)
-            })
-        }
-        else if (this.state.operator === 'divide') {
-            this.state.currentValue = this.state.input
-            this.setState({
-
-                input: parseFloat(this.state.previousValue) / parseFloat(this.state.currentValue)
-            })
-        }
-        else if (this.state.operator === 'multiply') {
-            this.state.currentValue = this.state.input
-            this.setState({
-
-                input: parseFloat(this.state.previousValue) * parseFloat(this.state.currentValue)
-            })
-        }
+       )
+       
     }
     render() {
 
         return (
-            <div><h1>Hi I'm the calculator</h1>
+            <div><h1>TEST</h1>
             <div id='calculator'>
                 <div id='formula'>{this.state.formula}</div>
                 <div id='display'>{this.state.input}</div>
-                {console.log(this.state.previousValue, this.state.input)}
+                {console.log(this.state.formula, this.state.input)}
                 <div id='row' >
                     <button id='seven' ref={event => createRef(event)} value='7' onClick={this.handleCLick}>7</button>
                     <button id='eight' ref={event => createRef(event)} value='8' onClick={this.handleCLick}>8</button>
@@ -120,7 +131,7 @@ class Calculator extends React.Component {
                     <button id='four' ref={event => createRef(event)} value='4' onClick={this.handleCLick}>4</button>
                     <button id='five' ref={event => createRef(event)} value='5' onClick={this.handleCLick}>5</button>
                     <button id='six' ref={event => createRef(event)} value='6' onClick={this.handleCLick}>6</button>
-                    <button id='multiply' ref={event => createRef(event)} onClick={this.multiply} value='*'>*</button>
+                    <button id='multiply' ref={event => createRef(event)} onClick={this.multiply} value='*'>x</button>
                 </div>
                 <div id='row' ><button id='one' ref={event => createRef(event)} value='1' onClick={this.handleCLick}>1</button>
                     <button id='two' ref={event => createRef(event)} value='2' onClick={this.handleCLick}>2</button>
