@@ -9,7 +9,6 @@ class CalculatorTest extends React.Component {
             formula:'',
             input: '0',
             previousValue: '',
-            currentValue: '',
         }
         this.handleCLick = this.handleCLick.bind(this);
     }

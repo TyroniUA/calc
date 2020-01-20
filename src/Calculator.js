@@ -24,27 +24,7 @@ class Calculator extends React.Component {
             })
 
         }
-        else if (!endsWithOperator.test(this.state.formula)) {
-            console.log('Im testing')
-            this.setState({
-                previousValue: this.state.formula,
-                formula: this.state.formula + event.target.value
-            })
-            console.log(this.state.previousValue);
-        }
-        else if (!endsWithNegativeSign.test(this.state.formula)) {
-            console.log('negative sign')
-            this.setState({
-                formula: (endsWithNegativeSign.test(this.state.formula + event.target.value) ? this.state.formula : this.state.previousValue) + event.target.value
-            })
-        }
-        else if (event.target.value !== "‑") {
-            console.log('it also doing something')
-            this.setState({
-                formula: this.state.previousValue + event.target.value
-            })
-
-        }
+       
         else {
             this.setState({
                 formula: this.state.formula + event.target.value,
@@ -116,7 +96,7 @@ class Calculator extends React.Component {
     render() {
 
         return (
-            <div><h1>TEST</h1>
+            <div><h1>hi</h1>
             <div id='calculator'>
                 <div id='formula'>{this.state.formula}</div>
                 <div id='display'>{this.state.input}</div>
